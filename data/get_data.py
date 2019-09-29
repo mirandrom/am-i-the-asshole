@@ -1,7 +1,6 @@
 from psaw import PushshiftAPI
 import datetime as dt
 import pandas as pd
-from collections import defaultdict
 
 submission_filter = [
     'author',
@@ -83,43 +82,43 @@ def merge_comments_and_posts(df_posts: pd.DataFrame, df_comments: pd.DataFrame):
 
 
 if __name__ == '__main__':
-    # api = PushshiftAPI()
-    # start_dt = int(dt.datetime(2019, 1, 1).timestamp())
-    # posts_gen = api.search_submissions(
-    #     after=start_dt,
-    #     subreddit="amitheasshole",
-    #     filter=submission_filter
-    # )
-    # df_posts = pd.DataFrame()
-    # posts = []
-    # for post in posts_gen:
-    #     posts.append(post.d_)
-    #     if len(posts) == 25_000:
-    #         df_posts = df_posts.append(pd.DataFrame(posts))
-    #         print(f"Writing {len(df_posts)} posts to df...")
-    #         df_posts.to_pickle("aita_2019_posts.pkl")
-    #         posts = []
-    #
-    # df_comments = pd.DataFrame()
-    # for q in ["NTA", "YTA", "ESH", "NAH", "INFO"]:
-    #     print("Getting comments for ", q)
-    #     comments_gen = api.search_comments(
-    #         after=start_dt,
-    #         subreddit="amitheasshole",
-    #         filter=comment_filter,
-    #         q=q,
-    #     )
-    #     comments = []
-    #     for comment in comments_gen:
-    #         comments.append(comment.d_)
-    #         if len(comments) == 10_000:
-    #             print(f"scraped {len(comments)} comments")
-    #         if len(comments) == 100_000:
-    #             df_comments = df_comments.append(pd.DataFrame(comments))
-    #             print(f"Writing {len(df_comments)} posts to df...")
-    #             df_comments.to_pickle("aita_2019_comments.pkl")
-    #             break
-    #     df_comments.to_pickle("aita_2019_comments.pkl")
+    api = PushshiftAPI()
+    start_dt = int(dt.datetime(2019, 1, 1).timestamp())
+    posts_gen = api.search_submissions(
+        after=start_dt,
+        subreddit="amitheasshole",
+        filter=submission_filter
+    )
+    df_posts = pd.DataFrame()
+    posts = []
+    for post in posts_gen:
+        posts.append(post.d_)
+        if len(posts) == 25_000:
+            df_posts = df_posts.append(pd.DataFrame(posts))
+            print(f"Writing {len(df_posts)} posts to df...")
+            df_posts.to_pickle("aita_2019_posts.pkl")
+            posts = []
+
+    df_comments = pd.DataFrame()
+    for q in ["NTA", "YTA", "ESH", "NAH", "INFO"]:
+        print("Getting comments for ", q)
+        comments_gen = api.search_comments(
+            after=start_dt,
+            subreddit="amitheasshole",
+            filter=comment_filter,
+            q=q,
+        )
+        comments = []
+        for comment in comments_gen:
+            comments.append(comment.d_)
+            if (len(comments) % 10_000) == 0:
+                print(f"scraped {len(comments)} comments")
+            if len(comments) == 100_000:
+                df_comments = df_comments.append(pd.DataFrame(comments))
+                print(f"Writing {len(df_comments)} posts to df...")
+                df_comments.to_pickle("aita_2019_comments.pkl")
+                break
+        df_comments.to_pickle("aita_2019_comments.pkl")
 
     df_posts = pd.read_pickle("aita_2019_posts.pkl")
     df_comments = pd.read_pickle("aita_2019_comments.pkl")
