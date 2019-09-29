@@ -27,9 +27,12 @@ comment_filter = [
     'total_awards_received',
 ]
 
+
 def clean_posts(df):
     df = df.loc[(df["title"].str.startswith("AITA")) | (df["title"].str.startswith("WIBTA"))]
     df = df.loc[~(df["selftext"] == "[removed]")]
+    df = df.loc[~(pd.isna(df["selftext"]))]
+    df = df.loc[df.selftext == ""]
     df = df.loc[df["num_comments"] > 0]
     return df
 
@@ -73,6 +76,7 @@ def merge_comments_and_posts(df_posts: pd.DataFrame, df_comments: pd.DataFrame):
     df_posts = df_posts[df_posts["label_sum"] > 0]
     df_posts["label_probs"] = [[c/s for c in counts] for counts, s in zip(
         df_posts["label_counts"], df_posts["label_sum"])]
+
     print(f"{l - len(df_posts)} posts removed")
     df_posts.to_pickle("aita_2019_posts_labeled.pkl")
     df_comments.to_pickle("aita_2019_comments_cleaned.pkl")
