@@ -1,0 +1,4 @@
+psaw
+pandas
+numpy
+allennlp
