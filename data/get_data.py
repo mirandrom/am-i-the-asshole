@@ -31,7 +31,7 @@ def clean_posts(df):
     df = df.loc[(df["title"].str.startswith("AITA")) | (df["title"].str.startswith("WIBTA"))]
     df = df.loc[~(df["selftext"] == "[removed]")]
     df = df.loc[~(pd.isna(df["selftext"]))]
-    df = df.loc[df.selftext == ""]
+    df = df.loc[~df.selftext == ""]
     df = df.loc[df["num_comments"] > 0]
     return df
 
